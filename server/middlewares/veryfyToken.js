@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
-const veryfyToken = (res, req, next) => {
+const veryfyToken = (req, res, next) => {
+    // console.log("111111111111111");
   try {
     const token = req.headers.authorization?.split(" ")[1];
+    //  console.log("111111",token);
     if (!token) {
       return res.status(401).json({
         message: "khong tim thay token",
@@ -13,18 +15,22 @@ const veryfyToken = (res, req, next) => {
           return res.status(401).json({
             message: "token đã hết hạn",
           });
-        } else {
-          return res.status(403).json({ message: "token khong hop le" });
-        }
+        } 
       }
-      if (data.role != 1) {
-        return res.status(403).json({
-          message: "Bạn không có quyền làm việc này",
-        });
-      }
+      else {
+        console.log("11111777",data);
+        if (data.role != 1) {
+            
+            return res.status(403).json({
+              message: "Bạn không có quyền làm việc này",
+            });
+          }
+    }
+     
       next();
     });
   } catch (err) {
+    // console.log("888888888888");
     return res.status(500).json({message:"severError"})
   }
 };

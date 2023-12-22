@@ -1,15 +1,42 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./todo.css"
 import { Button } from '@mui/material'
 import publicAxios from '../config/publicAxios';
+import privateAxios from '../config/privateAxios';
 function Todolist() {
     const [listTodo,setListTodo]=useState([]);
     const [todo,setTodo]=useState("");
- async function getAllTodo(){
-const res=await publicAxios.get("/todo")
-setTodo(res.data.todo)
+    const [status,setStatus]=useState(false)
+ const getAllTodo=async()=>{
+const res=await publicAxios.get("/todo");
+setListTodo([res.data.todo])
 }
-console.log(todo);
+useEffect(()=>{
+getAllTodo()
+},[status])
+const getValue =(e)=>{
+    setTodo(e.target.value)
+}
+const handleClickAdd=async()=>{
+let a={
+    todo:todo
+}
+      try{
+        const res=await privateAxios.post("/todo",a);
+      }  catch(err){
+        alert(err.response.data.message)
+      }   
+setStatus(!status);
+setTodo("")
+}
+const handleDelete= async(id)=>{
+    try{
+        const res=await privateAxios.delete(`/todo/${id}`);
+      }  catch(err){
+        alert(err.response.data.message)
+      }   
+      setStatus(!status)
+}
   return (
     <body>
         <div className="container">
@@ -19,12 +46,13 @@ console.log(todo);
       <i className="fa-solid fa-book-bookmark" />
     </div>
     <div className="row">
-      <input type="text" id="input-box" placeholder="add your tasks" name='todo' value={todo} />
-      <Button>Add</Button>
+      <input type="text" id="input-box" placeholder="add your tasks" name='todo' value={todo} onChange={getValue} />
+      <Button onClick={handleClickAdd}>Add</Button>
     </div>
     <ul id="list-container">
-        <li>jaa<Button>Sửa</Button> <Button>Xóa</Button></li>
-        <li>jaa<Button>Sửa</Button> <Button>Xóa</Button></li>
+      {listTodo.length==0?"":listTodo[0].map((item,i)=>(
+        <li key={i}> {item.todo} <Button onClick={()=>handleDelete(item.id)}>xóa</Button></li>
+      ))}
     </ul>
   </div>
 </div>

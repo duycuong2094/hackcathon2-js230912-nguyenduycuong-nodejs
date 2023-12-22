@@ -1,16 +1,12 @@
 import axios from "axios";
-const baseURL="http://localhost:8000"
-const privateAxios=axios.create({
-    baseURL,
+
+const baseURL = "http://localhost:8000";
+
+const publicAxios = axios.create({
+  baseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
-privateAxios.interceptors.request.use((config)=>{
-    const jwtToken=localStorage.getItem("token");
-    return{
-        ...config,
-        headers:{
-            "Content-Type":"application/json",
-            Authorization:`Bearer  ${jwtToken}`
-        }
-    }
-})
-export default privateAxios
+
+export default publicAxios;
